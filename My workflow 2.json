@@ -1,0 +1,256 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "7f64083a-5005-4bb1-815a-ac85fe32cf6f",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        64,
+        0
+      ],
+      "webhookId": "508333a2-64c3-45ba-bec4-c3b67e5f66f7",
+      "credentials": {
+        "telegramApi": {
+          "id": "FGZXPPYN2z9EuuZr",
+          "name": "Wald"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "ROL Y ÁMBITO]Sos un Agente de Triaje de Soporte Técnico para una empresa SaaS B2B. Tu único ámbito es interpretar mensajes desestructurados de usuarios, identificar el problema principal, clasificar la prioridad y registrar un ticket limpio para que el equipo de soporte pueda actuar. NO tenés autorización para: prometer tiempos de resolución, cerrar tickets, otorgar compensaciones, modificar datos productivos, borrar registros, ejecutar acciones destructivas, brindar asesoramiento legal o comprometer decisiones comerciales.[OBJETIVO OPERATIVO]Convertir cada consulta entrante en un registro estructurado con: nombre del usuario, contacto, empresa, categoría del problema, prioridad, resumen del caso y próxima acción recomendada.[REGLAS DE USO DE HERRAMIENTAS]- Usá la herramienta \\\"Registrar_Ticket_Soporte\\\" SOLO cuando tengas datos mínimos suficientes: contacto del usuario, categoría del problema y descripción del inconveniente.\\n- Si falta un dato clave, hacé una única pregunta clara antes de registrar.\\n- No inventes información. Si un dato no fue provisto, dejalo vacío o marcá \\\"No informado\\\". Clasificá la prioridad como Alta, Media o Baja. Alta aplica si hay bloqueo total, impacto en facturación, caída de servicio, pérdida de datos o cliente estratégico.- Si el mensaje mezcla varios problemas, priorizá el problema de mayor impacto y dejá el resto en notas.\\n\\n[PROTOCOLO DE ESCALAMIENTO / GUARDRAILS]\\n- Si el usuario reporta pérdida de datos, caída generalizada, incidente de seguridad, cliente VIP o amenaza de baja, marcá prioridad Alta y recomendá revisión humana inmediata.\\n- Si el usuario pide una acción destructiva o sensible, detené el ciclo y respondé: \\\"El caso requiere revisión humana antes de ejecutar acciones sensibles.\\\"\\n- No envíes correos ni mensajes externos al cliente final. Solo registrá el ticket y generá un resumen operativo.\\n\\n[ESTILO]\\n- Escribí en español rioplatense estándar, claro y profesional.\\n- No uses lenguaje inclusivo con terminaciones en -e, -x o @.\\n- Sé breve, específico y orientado a la operación.\""
+        }
+      },
+      "id": "d4c61092-d3f9-4ab0-a79b-093c404cb680",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        384,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-20b",
+        "options": {}
+      },
+      "id": "bed03a2f-fd3e-4482-9bfa-1bf5d069211d",
+      "name": "Groq Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        256,
+        208
+      ],
+      "credentials": {
+        "groqApi": {
+          "id": "eqin5kNfaSdVFMKO",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendMessageDraft",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=Reporte de observacion. Agente de triage de soporte: {{ $json.output }}",
+        "additionalFields": {}
+      },
+      "id": "7a9f0dc7-8970-433c-8076-ec5bc53b2133",
+      "name": "Telegram respuesta.",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        752,
+        0
+      ],
+      "webhookId": "ef337cac-772a-4318-8e5b-8a0063826d98",
+      "credentials": {
+        "telegramApi": {
+          "id": "FGZXPPYN2z9EuuZr",
+          "name": "Wald"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Esta herramienta registra ticket de soporte tecnico",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1sD9dxmCpm9lXcyrEXMbuin3UoMrunioNmgoenMZkS9Y",
+          "mode": "list",
+          "cachedResultName": "Registrar_ticket_soporte",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sD9dxmCpm9lXcyrEXMbuin3UoMrunioNmgoenMZkS9Y/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sD9dxmCpm9lXcyrEXMbuin3UoMrunioNmgoenMZkS9Y/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Contacto ",
+              "displayName": "Contacto ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Empresa",
+              "displayName": "Empresa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Categoria",
+              "displayName": "Categoria",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Seguridad",
+              "displayName": "Seguridad",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Resumen",
+              "displayName": "Resumen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Proxima accion",
+              "displayName": "Proxima accion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        544,
+        208
+      ],
+      "id": "4db368ba-6b2b-42c8-ad68-176e1357fdfa",
+      "name": "Append row in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "FrtuTj3ZPJBehK7Z",
+          "name": "Google Sheets account 4"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram respuesta.",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "7136ba98-6c16-4c84-b96a-356f7dd3ed8e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "93e2191e753553a06f824fe11ab043188e099255796fa103c9f1fd2bc9fd0990"
+  },
+  "nodeGroups": [],
+  "id": "1o3HSHLh8dFQwhKe",
+  "tags": []
+}
